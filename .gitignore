@@ -1,0 +1,57 @@
+# --- SECRETS & ENVIRONMENT (ДОБАВЛЕНО) ---
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*password*.txt
+*secret*.txt
+
+# --- HELP.md (от Initializr) ---
+HELP.md
+
+# --- Maven ---
+target/
+!/.mvn/wrapper/maven-wrapper.jar
+
+# --- STS ---
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+# --- IntelliJ IDEA ---
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# --- NetBeans ---
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# --- VS Code ---
+.vscode/
+
+# --- OS / System ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Logs ---
+*.log
+logs/
+
+# --- Database dumps (локальные, не миграции) ---
+*.dump
+*.backup
+!src/main/resources/db/migration/*.sql
