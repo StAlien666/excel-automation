@@ -4,6 +4,7 @@ package ru.alexandr.excel_automation.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
@@ -32,14 +33,11 @@ public class ReportDataEntity {
     private String metricName;
 
     // за отчётный месяц
-    @Column(name = "value_month")
-    private Integer valueMonth;
+    @Column(name = "value_month", precision = 15, scale = 3)
+    private BigDecimal valueMonth;
 
     //с начала года
-    @Column(name = "value_year_start")
-    private Integer valueYearStart;
-
-    //один отчёт + один субъект + одна метрика = уникальность
-    @Column(name = "unique_key", insertable = false, updatable = false)
-    private String uniqueKey;
+    @Column(name = "value_year_start", precision = 15, scale = 3)
+    private BigDecimal valueYearStart;
+    
 }

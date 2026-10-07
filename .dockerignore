@@ -1,10 +1,9 @@
-.idea/
-*.iml
-target/
-src/
-pom.xml
-.git/
+.git
 .gitignore
+.idea
+*.iml
+target
+.env
 README.md
-Dockerfile
 docker-compose.yml
+dockerfile
