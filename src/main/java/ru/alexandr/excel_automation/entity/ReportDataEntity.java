@@ -1,10 +1,7 @@
 package ru.alexandr.excel_automation.entity;
-//Строки данных (строгие колонки)
-
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
@@ -20,24 +17,13 @@ public class ReportDataEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "report_id", nullable = false)
     private ReportEntity report;
 
-    // субъект измерения
-    @Column(name = "row_subject", nullable = false, length = 150)
-    private String rowSubject;
+    @Column(name = "metric_key", nullable = false, length = 80)
+    private String metricKey;
 
-    // ключ метрики
-    @Column(name = "metric_name", nullable = false, length = 150)
-    private String metricName;
-
-    // за отчётный месяц
-    @Column(name = "value_month", precision = 15, scale = 3)
-    private BigDecimal valueMonth;
-
-    //с начала года
-    @Column(name = "value_year_start", precision = 15, scale = 3)
-    private BigDecimal valueYearStart;
-    
+    @Column(name = "value_month")
+    private Integer valueMonth;
 }

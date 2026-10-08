@@ -1,7 +1,6 @@
 package ru.alexandr.excel_automation.entity;
 
 public enum UserRole {
-    ADMIN,          // полный доступ
-    DISTRICT_USER,  // загрузка и редактирование в районе
-    VIEWER          // просмотр и скачивание
+    ADMIN,          // правит всё, включая отделочные поля и генеральный отчёт
+    DISTRICT_USER   // правит только свой район
 }

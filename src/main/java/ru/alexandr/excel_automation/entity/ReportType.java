@@ -1,8 +1,9 @@
 package ru.alexandr.excel_automation.entity;
 
 public enum ReportType {
-    SALMONELLA_DISTRICT,  // сальмонеллез по районам
-    SALMONELLA_SPECIES,   // сальмонеллез по видам животных
-    PRODUCTION_ACTIVITY,
-    BAK_BOL               // Универсальный шаблон
+    SALMONELLA,           // сальмонеллез: по видам + ручные колонки районы
+    BAK_BOL,              // бак. болезни: журнал + сводная
+    PROIZVODSTVENNAYA,    // производственная деятельность
+    TBC_BRUCELLOSIS,      // туберкулез + бруцеллез КРС
+    PADEZH                // падеж + поступило в лабораторию
 }

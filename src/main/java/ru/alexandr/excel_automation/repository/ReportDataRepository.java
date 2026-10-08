@@ -9,8 +9,6 @@ import java.util.UUID;
 
 @Repository
 public interface ReportDataRepository extends JpaRepository<ReportDataEntity, UUID> {
-
-    List<ReportDataEntity> findAllByReportId(UUID reportId);
-
-    void deleteAllByReportId(UUID reportId);
+    List<ReportDataEntity> findByReportId(UUID reportId);
+    void deleteByReportId(UUID reportId);
 }

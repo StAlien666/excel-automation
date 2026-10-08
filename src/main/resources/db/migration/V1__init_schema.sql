@@ -1,60 +1,94 @@
 
 CREATE TABLE districts (
-    code      VARCHAR(50)  PRIMARY KEY,
-    name      VARCHAR(150) NOT NULL,
-    is_active BOOLEAN      NOT NULL DEFAULT TRUE
+    name       VARCHAR(150) PRIMARY KEY,
+    abbr       VARCHAR(20),                 -- сокращения из БАК БОЛ (КАЛ, ПОЛ...) имена их листов
+    sort_order SMALLINT  NOT NULL,          -- номер строки в отчётах
+    is_active  BOOLEAN   NOT NULL DEFAULT TRUE
 );
-COMMENT ON TABLE districts IS 'Справочник районов области';
+
+INSERT INTO districts (name, abbr, sort_order) VALUES
+    ('Азовский',            NULL,  1),
+    ('Большереченский',     'Б-Р', 2),
+    ('Большеуковский',      NULL,  3),
+    ('Горьковский',         NULL,  4),
+    ('Знаменский',          NULL,  5),
+    ('Исилькульский',       'ИС',  6),
+    ('Калачинский',         'КАЛ', 7),
+    ('Колосовский',         NULL,  8),
+    ('Кормиловский',        'КОР', 9),
+    ('Крутинский',          NULL, 10),
+    ('Любинский',           NULL, 11),
+    ('Марьяновский',        NULL, 12),
+    ('Москаленский',        'МОС', 13),
+    ('Муромцевский',        'МУР', 14),
+    ('Называевский',        'НАЗ', 15),
+    ('Нижнеомский',         NULL, 16),
+    ('Нововаршавский',      'Н-В', 17),
+    ('Одесский',            'ОД', 18),
+    ('Оконешниковский',     'ОК', 19),
+    ('Омский',              'ОМ', 20),
+    ('Павлоградский',       'ПАВ', 21),
+    ('Полтавский',          'ПОЛ', 22),
+    ('Русско-Полянский',    'Р-П', 23),
+    ('Саргатский',          NULL, 24),
+    ('Седельниковский',     'СЕД', 25),
+    ('Таврический',         'ТАВ', 26),
+    ('Тарский',             'ТАР', 27),
+    ('Тевризский',          NULL, 28),
+    ('Тюкалинский',         'ТЮК', 29),
+    ('Усть-Ишимский',       NULL, 30),
+    ('Черлакский',          'ЧЕР', 31),
+    ('Шербакульский',       'ШЕР', 32),
+    ('Омск',                NULL, 33);
 
 CREATE TABLE users (
     id            UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
-    username      VARCHAR(50)  NOT NULL,
+    username      VARCHAR(50)  NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
     role          VARCHAR(20)  NOT NULL,
-    district_code VARCHAR(50),
-    is_active     BOOLEAN      NOT NULL DEFAULT TRUE,
-    CONSTRAINT users_username_unique UNIQUE (username),
-    CONSTRAINT users_role_check CHECK (role IN ('ADMIN', 'DISTRICT_USER')),
-    CONSTRAINT users_district_user_needs_district
-        CHECK (role <> 'DISTRICT_USER' OR district_code IS NOT NULL)
+    district_name VARCHAR(150) REFERENCES districts(name) ON UPDATE CASCADE,
+    is_active     BOOLEAN      NOT NULL DEFAULT TRUE
 );
-COMMENT ON TABLE users IS 'Пользователи и их роли';
 
 CREATE TABLE reports (
-    id            UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
-    district_code VARCHAR(50)  NOT NULL,
-    period_month  INTEGER      NOT NULL,
-    period_year   INTEGER      NOT NULL,
-    version       INTEGER      NOT NULL DEFAULT 1,
-    report_type   VARCHAR(50)  NOT NULL,
-    status        VARCHAR(20)  NOT NULL DEFAULT 'UPLOADED',
-    created_at    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    id            UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+    district_name VARCHAR(150) NOT NULL REFERENCES districts(name) ON UPDATE CASCADE,
+    period_year   INTEGER     NOT NULL,
+    period_month  INTEGER     NOT NULL,
+    report_type   VARCHAR(50) NOT NULL,               -- Java-enum ReportType
+    version       INTEGER     NOT NULL DEFAULT 1,
+    status        VARCHAR(20) NOT NULL DEFAULT 'DRAFT',
+    created_at    TIMESTAMP   NOT NULL DEFAULT now(),
     updated_at    TIMESTAMP,
-    CONSTRAINT unique_report_key
-        UNIQUE (district_code, period_year, period_month, version, report_type),
-    CONSTRAINT reports_report_type_check CHECK (report_type IN
-        ('SALMONELLA_DISTRICT','SALMONELLA_SPECIES','PRODUCTION_ACTIVITY','BAK_BOL')),
-    CONSTRAINT reports_status_check CHECK (status IN
-        ('UPLOADED','DRAFT','COMMITTED','EXPORTING','READY','ERROR')),
-    CONSTRAINT reports_period_month_check CHECK (period_month BETWEEN 1 AND 12),
-    CONSTRAINT reports_period_year_check  CHECK (period_year  BETWEEN 2000 AND 2100),
-    CONSTRAINT reports_version_check      CHECK (version > 0)
+    created_by    UUID        REFERENCES users(id),
+    CONSTRAINT reports_version_unique UNIQUE
+        (district_name, period_year, period_month, report_type, version),
+    CONSTRAINT reports_month_check CHECK (period_month BETWEEN 1 AND 12)
 );
-COMMENT ON TABLE reports IS 'Метаданные загруженного отчёта';
 
 CREATE TABLE report_data (
-    id               UUID          PRIMARY KEY DEFAULT gen_random_uuid(),
-    report_id        UUID          NOT NULL,
-    row_subject      VARCHAR(150)  NOT NULL,
-    metric_name      VARCHAR(150)  NOT NULL,
-    value_month      NUMERIC(15,3),
-    value_year_start NUMERIC(15,3),
-    CONSTRAINT report_data_report_fk
-        FOREIGN KEY (report_id) REFERENCES reports(id) ON DELETE CASCADE,
-    CONSTRAINT unique_report_metric
-        UNIQUE (report_id, row_subject, metric_name)
+    id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+    report_id   UUID        NOT NULL REFERENCES reports(id) ON DELETE CASCADE,
+    metric_key  VARCHAR(80) NOT NULL,
+    value_month INTEGER,
+    CONSTRAINT report_data_unique UNIQUE (report_id, metric_key)
 );
-COMMENT ON TABLE report_data IS 'Строки данных отчёта: субъект / метрика / значения';
 
-CREATE INDEX idx_report_data_subject ON report_data(row_subject);
-CREATE INDEX idx_report_data_metric  ON report_data(metric_name);
+CREATE INDEX idx_report_data_report ON report_data(report_id);
+
+CREATE TABLE report_files (
+    id            UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
+    district_name VARCHAR(150) NOT NULL REFERENCES districts(name) ON UPDATE CASCADE,
+    period_year   INTEGER      NOT NULL,
+    period_month  INTEGER,
+    report_type   VARCHAR(50),
+    original_name VARCHAR(255) NOT NULL,
+    stored_path   VARCHAR(500) NOT NULL,
+    content_type  VARCHAR(100),
+    size_bytes    BIGINT       NOT NULL,
+    comment       VARCHAR(500),
+    uploaded_at   TIMESTAMP    NOT NULL DEFAULT now(),
+    uploaded_by   UUID         REFERENCES users(id)
+);
+
+CREATE INDEX idx_report_files_district ON report_files(district_name, period_year);
