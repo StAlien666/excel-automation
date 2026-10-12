@@ -1,0 +1,89 @@
+/* дизайн отдела */
+:root {
+  --bg: #f4f6f8;
+  --card: #ffffff;
+  --border: #dfe5ea;
+  --text: #1c2b33;
+  --muted: #64748b;
+  --accent: #0f7b52;
+  --accent-dark: #0b5c3e;
+  --accent-soft: #e2f3eb;
+  --danger: #b42318;
+  --danger-soft: #fdecea;
+  --warn: #b54708;
+  --warn-soft: #fdf0e0;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(16, 42, 32, .08), 0 8px 24px rgba(16, 42, 32, .06);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+a { color: var(--accent-dark); }
+
+/* ---------- шапка ---------- */
+.topbar {
+  display: flex; align-items: center; gap: 20px;
+  padding: 12px 24px;
+  background: var(--accent-dark);
+  color: #fff;
+}
+.topbar .brand { font-weight: 700; font-size: 17px; color: #fff; text-decoration: none; letter-spacing: .2px; }
+.topbar .spacer { flex: 1; }
+.topbar .who { color: #cfe8dd; font-size: 14px; }
+.topbar .who b { color: #fff; }
+.topbar form { display: inline; }
+.topbar button, .btn {
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+}
+.topbar button { background: transparent; border-color: #3d8465; color: #cfe8dd; }
+.topbar button:hover { background: #14684a; color: #fff; }
+.btn { background: var(--accent); color: #fff; }
+.btn:hover { background: var(--accent-dark); }
+.btn.secondary { background: #fff; color: var(--text); border-color: var(--border); }
+.btn.secondary:hover { border-color: var(--muted); }
+
+/* ---------- контент ---------- */
+.container { max-width: 1200px; margin: 24px auto; padding: 0 20px; }
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px 24px;
+  margin-bottom: 20px;
+}
+.card h1, .card h2 { margin-top: 0; }
+.muted { color: var(--muted); }
+.small { font-size: 13px; }
+
+/* ---------- формы ---------- */
+.field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+.field input {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 15px;
+}
+.field input:focus { outline: 2px solid var(--accent-soft); border-color: var(--accent); }
+
+.alert { padding: 10px 14px; border-radius: 8px; margin-bottom: 14px; font-size: 14px; }
+.alert.error { background: var(--danger-soft); color: var(--danger); }
+.alert.info  { background: var(--accent-soft); color: var(--accent-dark); }
+
+/* ---------- таблицы ---------- */
+table.grid { border-collapse: collapse; width: 100%; }
+table.grid th, table.grid td { border: 1px solid var(--border); padding: 6px 10px; text-align: center; }
+table.grid th { background: #eef2f5; }

@@ -27,6 +27,12 @@ spring:
       max-file-size: 50MB
       max-request-size: 50MB
 
+# настройки приложения
+app:
+  admin:
+    username: ${ADMIN_USERNAME:admin}
+    password: ${ADMIN_PASSWORD:admin}
+
 logging:
   level:
     root: INFO

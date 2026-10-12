@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Отчёты бактериологического отдела</title>
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<header class="topbar">
+    <a class="brand" href="/">Отчёты отдела</a>
+    <div class="spacer"></div>
+    <span class="who" th:if="${username != null}">Вы: <b th:text="${username}"></b></span>
+    <!-- выход POST -->
+    <form th:if="${username != null}" th:action="@{/logout}" method="post">
+        <button type="submit">Выйти</button>
+    </form>
+    <a class="btn secondary" th:if="${username == null}" href="/login">Войти</a>
+</header>
+
+<main class="container">
+    <div class="card">
+        <h1>Отчёты бактериологического отдела</h1>
+        <p class="muted">
+            Этап 2: каркас безопасности работает.
+            Публично доступно всё чтение; ввод данных, подтверждение сдач и архив — после входа.
+        </p>
+        <p class="muted small">
+            Следующим этапом здесь появится матрица «район × месяц» и формы ввода по спеке отчёта.
+        </p>
+    </div>
+
+    <div class="card" th:if="${username != null}">
+        <h2>Служебное</h2>
+        <p><a href="/admin/ping">/admin/ping</a> — проверка роли ADMIN (доступно только админам).</p>
+    </div>
+</main>
+</body>
+</html>
